@@ -7,7 +7,7 @@ const Navigation = () => {
     return (
         <div>
             <Navbar dark color="dark">
-                <div class="container">
+                <div className="container">
                     <NavbarBrand href="/">reactstrap</NavbarBrand>
                 </div>
             </Navbar>
