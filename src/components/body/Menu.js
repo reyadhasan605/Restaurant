@@ -1,37 +1,92 @@
 import React, { Component } from 'react';
-import DISHES from '../../data/dishes';
 import MenuList from './MenuList';
+import DishDetails from './DishDetails';
+import { CardColumns, Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { connect } from 'react-redux'
+import { fetchdished, fetchcomment } from '../../redux/Action';
 
 class Menu extends Component {
 
+    constructor(props) {
+        super(props);
+
+
+    }
 
     state = {
-        dishes: DISHES
+        selectedDish: null,
+        modalisopen: false
+    }
+
+    onDishSelect = dish => {
+        this.setState({
+            selectedDish: dish,
+            modalisopen: !this.state.modalisopen
+        });
+
+
+    }
+    handelmodal = () => {
+        this.setState({
+            modalisopen: !this.state.modalisopen
+        })
+    }
+    componentDidMount() {
+        this.props.startfetching();
+        this.props.startfetchingcom();
     }
 
     render() {
-
-        const menu = this.state.dishes.map(item => {
-
+        document.title = "Menu"
+        const menu = this.props.dishfromredux.map(item => {
             return (
-                <MenuList dish={item} key={item.id} />
+                <MenuList dish={item} key={item.id}
+                    DishSelect={this.onDishSelect}
+                />
             );
         })
 
+        let dd = null;
+        if (this.state.selectedDish != null) {
+            const com = this.props.commentfromrexux.filter(c => {
+                return this.state.selectedDish.id === c.dishId
+            });
+            dd = <DishDetails dish={this.state.selectedDish} comment={com}
+            />
+        }
         return (
             <div className='container'>
-                <div className='row'>
-                    <div className='col-6'>
-                        {menu}
 
-                    </div>
-
-                </div>
-
+                <CardColumns>
+                    {menu}
+                </CardColumns>
+                <Modal isOpen={this.state.modalisopen}>
+                    <ModalBody>
+                        {dd}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="danger" onClick={this.handelmodal}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </Modal>
             </div>
 
         );
     }
 
 }
-export default Menu;
+const mapstatetoprops = (sta) => {
+    return {
+        commentfromrexux: sta.comments.comments,
+        dishfromredux: sta.dish.dishes
+    }
+}
+const mapdispatchtoprops = (dispatch) => {
+    return {
+        startfetching: () => dispatch(fetchdished()),
+        startfetchingcom: () => dispatch(fetchcomment())
+    }
+
+}
+export default connect(mapstatetoprops, mapdispatchtoprops)(Menu)
