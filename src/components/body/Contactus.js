@@ -1,7 +1,11 @@
+import axios from 'axios';
 import React, { Component } from 'react'
 import { Row, Col, Button, Form, FormGroup, Label, Input } from 'reactstrap';
+import { Alert } from 'reactstrap'
+import { base } from '../../redux/baseUrl'
 
 class Contactus extends Component {
+
     constructor(props) {
         super(props);
         this.state = {
@@ -16,6 +20,19 @@ class Contactus extends Component {
     }
 
     handelsubmit(event) {
+        axios.post(base + 'feedback', this.state)
+            .then(response => response.status)
+            .then(status => console.log(status));
+
+        this.setState({
+            firstname: "",
+            lastname: "",
+            telnum: "",
+            email: "",
+            agree: false,
+            contacttype: "",
+            message: ""
+        })
         event.preventDefault();
     }
     handelinputchange(event) {
@@ -30,6 +47,7 @@ class Contactus extends Component {
         document.title = "Contact"
         return (
             <div>
+                <Alert isOpen={this.state.alertshow} color={this.state.alerttype}></Alert>
                 <Form onSubmit={(event) => this.handelsubmit(event)}>
                     <Row form>
                         <Col md={6}>

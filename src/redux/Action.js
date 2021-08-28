@@ -41,6 +41,12 @@ export const founderror = (err) => {
     }
 
 }
+export const errorcomment = (err) => {
+    return {
+        type: "ERR_COM",
+        payload: err
+    }
+}
 export const loadingcom = () => {
     return {
         type: "LOADING_COM",
@@ -57,11 +63,12 @@ export let fetchdished = () => dispatch => {
     axios.get('http://localhost:3000/dishes')
         .then(response => response.data)
         .then(data => dispatch(loaded(data)))
-        .catch(err => dispatch(founderror(err)))
+        .catch(err => dispatch(founderror(err.message)))
 }
 export let fetchcomment = () => dispatch => {
     dispatch(loadingcom());
     axios.get('http://localhost:3000/comments')
         .then(response => response.data)
         .then(data => dispatch(loadcom(data)))
+        .catch(err => dispatch(errorcomment(err.message)))
 }

@@ -4,6 +4,8 @@ import DishDetails from './DishDetails';
 import { CardColumns, Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { connect } from 'react-redux'
 import { fetchdished, fetchcomment } from '../../redux/Action';
+import Loading from './Loading';
+import { Alert } from 'reactstrap'
 
 class Menu extends Component {
 
@@ -38,7 +40,18 @@ class Menu extends Component {
 
     render() {
         document.title = "Menu"
-        const menu = this.props.dishfromredux.map(item => {
+        if (this.props.dishfromredux.Loading) {
+            return <Loading />
+        }
+        else if (this.props.dishfromredux.error != null) {
+            return (
+                <Alert color="danger">
+                    {this.props.dishfromredux.error}
+                </Alert>
+            )
+
+        }
+        const menu = this.props.dishfromredux.dishes.map(item => {
             return (
                 <MenuList dish={item} key={item.id}
                     DishSelect={this.onDishSelect}
@@ -48,7 +61,7 @@ class Menu extends Component {
 
         let dd = null;
         if (this.state.selectedDish != null) {
-            const com = this.props.commentfromrexux.filter(c => {
+            const com = this.props.commentfromrexux.comments.filter(c => {
                 return this.state.selectedDish.id === c.dishId
             });
             dd = <DishDetails dish={this.state.selectedDish} comment={com}
@@ -78,8 +91,8 @@ class Menu extends Component {
 }
 const mapstatetoprops = (sta) => {
     return {
-        commentfromrexux: sta.comments.comments,
-        dishfromredux: sta.dish.dishes
+        commentfromrexux: sta.comments,
+        dishfromredux: sta.dish
     }
 }
 const mapdispatchtoprops = (dispatch) => {

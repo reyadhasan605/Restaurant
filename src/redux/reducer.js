@@ -42,10 +42,12 @@ const commentreducer = (Commentstate = { isLoading: false, comments: [], error: 
                 isLoading: false,
                 comments: action.payload
             }
-        case "ADD_STORE": {
-
-            return Commentstate.concat(comm)
-        }
+        case "ERR_COM":
+            return {
+                ...Commentstate,
+                isLoading: false,
+                error: action.payload
+            }
         default: return Commentstate
     }
 
